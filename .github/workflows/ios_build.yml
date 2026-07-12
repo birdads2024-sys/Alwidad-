@@ -1,0 +1,30 @@
+﻿name: iOS Build Check
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build_ios:
+    name: Build Flutter iOS (No Codesign)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Install iOS Pods
+        working-directory: ios
+        run: pod install --repo-update
+
+      - name: Build iOS Application (Test Build)
+        run: flutter build ios --no-codesign --release
