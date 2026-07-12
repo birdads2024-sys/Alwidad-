@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "779049231491",
+    "project_id": "alwidad-c4312",
+    "storage_bucket": "alwidad-c4312.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779049231491:android:8ebb71fa5093d68801e7b6",
+        "android_client_info": {
+          "package_name": "com.alwidad.alwidad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "779049231491-oq3ec04gm13lrt84glrblq1qopm4mf00.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alwidad.alwidad",
+            "certificate_hash": "b5c0cee524a69c2362a4e162e3e882ca41f7e2ba"
+          }
+        },
+        {
+          "client_id": "779049231491-1pu3fgpt5247ri3c9iosc7bujg8h3gmc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiIoLF3Tbzgy3epKaV_99ANr49iKGxAm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779049231491-1pu3fgpt5247ri3c9iosc7bujg8h3gmc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
