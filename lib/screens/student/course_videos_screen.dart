@@ -289,9 +289,10 @@ class _CourseVideosScreenState extends State<CourseVideosScreen> {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) => VideoPlayerScreen(
-                                                  videoUrl: quality.hlsUrl,
-                                                  title: '${widget.course.title} (${quality.qualityName})',
-                                                ),
+                                                    videoUrl: quality.hlsUrl,
+                                                    title: '${widget.course.title} (${quality.qualityName})',
+                                                    isDrm: quality.isDrm,
+                                                  ),
                                               ),
                                             );
                                           },
@@ -300,113 +301,115 @@ class _CourseVideosScreenState extends State<CourseVideosScreen> {
                                       const SizedBox(width: 8),
 
                                       // خيارات الأوفلاين والتحميل
-                                      if (isCompleted) ...[
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              backgroundColor: Colors.green.shade700,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'أوفلاين 💾',
-                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => VideoPlayerScreen(
-                                                    videoUrl: quality.mp4Url,
-                                                    title: '${widget.course.title} (${quality.qualityName})',
-                                                    downloadUrl: quality.mp4Url,
-                                                  ),
+                                      if (!quality.isDrm) ...[
+                                        if (isCompleted) ...[
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                                backgroundColor: Colors.green.shade700,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
                                                 ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                                          tooltip: 'حذف التحميل',
-                                          onPressed: () => _deleteDownload(quality),
-                                        ),
-                                      ] else if (isDownloading) ...[
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              backgroundColor: Colors.amber.shade800,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
                                               ),
-                                            ),
-                                            icon: const Icon(Icons.pause, size: 18),
-                                            label: const Text(
-                                              'إيقاف مؤقت',
-                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () {
-                                              DownloadManagerService().pauseDownload(quality.mp4Url);
-                                            },
-                                          ),
-                                        ),
-                                      ] else if (isPaused || isFailed) ...[
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              backgroundColor: Colors.blue.shade700,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
+                                              child: const Text(
+                                                'أوفلاين 💾',
+                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                               ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => VideoPlayerScreen(
+                                                      videoUrl: quality.mp4Url,
+                                                      title: '${widget.course.title} (${quality.qualityName})',
+                                                      downloadUrl: quality.mp4Url,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
                                             ),
-                                            icon: Icon(isPaused ? Icons.play_arrow : Icons.refresh, size: 18),
-                                            label: Text(
-                                              isPaused ? 'استكمال' : 'إعادة التحميل',
-                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () {
-                                              if (isPaused) {
-                                                DownloadManagerService().resumeDownload(quality.mp4Url);
-                                              } else {
-                                                _startDownload(quality);
-                                              }
-                                            },
                                           ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
-                                          tooltip: 'إلغاء التحميل',
-                                          onPressed: () => _deleteDownload(quality),
-                                        ),
-                                      ] else ...[
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              backgroundColor: Colors.grey.shade800,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
+                                          const SizedBox(width: 4),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                                            tooltip: 'حذف التحميل',
+                                            onPressed: () => _deleteDownload(quality),
+                                          ),
+                                        ] else if (isDownloading) ...[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                                backgroundColor: Colors.amber.shade800,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
                                               ),
-                                              side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+                                              icon: const Icon(Icons.pause, size: 18),
+                                              label: const Text(
+                                                'إيقاف مؤقت',
+                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                              ),
+                                              onPressed: () {
+                                                DownloadManagerService().pauseDownload(quality.mp4Url);
+                                              },
                                             ),
-                                            icon: const Icon(Icons.download, size: 18),
-                                            label: const Text(
-                                              'تحميل 📥',
-                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () => _startDownload(quality),
                                           ),
-                                        ),
+                                        ] else if (isPaused || isFailed) ...[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                                backgroundColor: Colors.blue.shade700,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              icon: Icon(isPaused ? Icons.play_arrow : Icons.refresh, size: 18),
+                                              label: Text(
+                                                isPaused ? 'استكمال' : 'إعادة التحميل',
+                                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                              ),
+                                              onPressed: () {
+                                                if (isPaused) {
+                                                  DownloadManagerService().resumeDownload(quality.mp4Url);
+                                                } else {
+                                                  _startDownload(quality);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),
+                                            tooltip: 'إلغاء التحميل',
+                                            onPressed: () => _deleteDownload(quality),
+                                          ),
+                                        ] else ...[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                                backgroundColor: Colors.grey.shade800,
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                side: BorderSide(color: theme.dividerColor.withValues(alpha: 0.5)),
+                                              ),
+                                              icon: const Icon(Icons.download, size: 18),
+                                              label: const Text(
+                                                'تحميل 📥',
+                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                              ),
+                                              onPressed: () => _startDownload(quality),
+                                            ),
+                                          ),
+                                        ],
                                       ],
                                     ],
                                   ),

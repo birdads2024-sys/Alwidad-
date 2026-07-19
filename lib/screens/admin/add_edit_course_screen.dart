@@ -55,6 +55,7 @@ class _AddEditCourseScreenState extends State<AddEditCourseScreen> {
         name: q.qualityName,
         hls: q.hlsUrl,
         mp4: q.mp4Url,
+        isDrm: q.isDrm,
       )).toList();
 
       if (_qualities.isEmpty && (c.hlsUrl.isNotEmpty || c.mp4Url.isNotEmpty)) {
@@ -62,11 +63,12 @@ class _AddEditCourseScreenState extends State<AddEditCourseScreen> {
           name: 'الافتراضية',
           hls: c.hlsUrl,
           mp4: c.mp4Url,
+          isDrm: false,
         ));
       }
     } else {
       // افتراضياً نضيف جودة فارغة
-      _qualities.add(VideoQualityInput(name: '1080p', hls: '', mp4: ''));
+      _qualities.add(VideoQualityInput(name: '1080p', hls: '', mp4: '', isDrm: false));
     }
   }
 
@@ -90,7 +92,7 @@ class _AddEditCourseScreenState extends State<AddEditCourseScreen> {
   // إضافة جودة جديدة
   void _addQualityField() {
     setState(() {
-      _qualities.add(VideoQualityInput(name: '', hls: '', mp4: ''));
+      _qualities.add(VideoQualityInput(name: '', hls: '', mp4: '', isDrm: false));
     });
   }
 
@@ -147,7 +149,8 @@ class _AddEditCourseScreenState extends State<AddEditCourseScreen> {
       final qualitiesList = _qualities.map((q) => VideoQuality(
         qualityName: q.nameController.text.trim(),
         hlsUrl: q.hlsController.text.trim(),
-        mp4Url: q.mp4Controller.text.trim(),
+        mp4Url: q.isDrm ? '' : q.mp4Controller.text.trim(),
+        isDrm: q.isDrm,
       )).toList();
 
       // تعيين الحقول القديمة لأول جودة لضمان التوافق التام
@@ -406,25 +409,45 @@ class _AddEditCourseScreenState extends State<AddEditCourseScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 12),
-                                // رابط MP4
-                                TextFormField(
-                                  controller: quality.mp4Controller,
-                                  keyboardType: TextInputType.url,
-                                  decoration: const InputDecoration(
-                                    labelText: 'رابط تحميل الفيديو MP4 URL (.mp4)',
-                                    prefixIcon: Icon(Icons.download),
-                                    hintText: 'https://example.com/stream/download.mp4',
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'يرجى إدخال رابط التحميل MP4';
-                                    }
-                                    if (!_isValidUrl(value.trim())) {
-                                      return 'يرجى إدخال رابط ويب صحيح يبدأ بـ http/https';
-                                    }
-                                    return null;
+                                // خيار حماية DRM
+                                CheckboxListTile(
+                                  title: const Text('حماية DRM (فيديو مشفر ومحمي)'),
+                                  subtitle: const Text('سيتم تعطيل خيار التحميل لهذا الفيديو تلقائياً'),
+                                  value: quality.isDrm,
+                                  activeColor: theme.primaryColor,
+                                  contentPadding: EdgeInsets.zero,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      quality.isDrm = val ?? false;
+                                      if (quality.isDrm) {
+                                        quality.mp4Controller.clear();
+                                      }
+                                    });
                                   },
                                 ),
+                                // رابط MP4
+                                if (!quality.isDrm) ...[
+                                  const SizedBox(height: 12),
+                                  TextFormField(
+                                    controller: quality.mp4Controller,
+                                    keyboardType: TextInputType.url,
+                                    decoration: const InputDecoration(
+                                      labelText: 'رابط تحميل الفيديو MP4 URL (.mp4)',
+                                      prefixIcon: Icon(Icons.download),
+                                      hintText: 'https://example.com/stream/download.mp4',
+                                    ),
+                                    validator: (value) {
+                                      if (quality.isDrm) return null;
+                                      if (value == null || value.trim().isEmpty) {
+                                        return 'يرجى إدخال رابط التحميل MP4';
+                                      }
+                                      if (!_isValidUrl(value.trim())) {
+                                        return 'يرجى إدخال رابط ويب صحيح يبدأ بـ http/https';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -494,11 +517,13 @@ class VideoQualityInput {
   final TextEditingController nameController;
   final TextEditingController hlsController;
   final TextEditingController mp4Controller;
+  bool isDrm;
 
   VideoQualityInput({
     required String name,
     required String hls,
     required String mp4,
+    this.isDrm = false,
   })  : nameController = TextEditingController(text: name),
         hlsController = TextEditingController(text: hls),
         mp4Controller = TextEditingController(text: mp4);

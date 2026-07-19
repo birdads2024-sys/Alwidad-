@@ -147,11 +147,13 @@ class VideoQuality {
   final String qualityName; // مثال: 480p, 1080p
   final String hlsUrl;
   final String mp4Url;
+  final bool isDrm;
 
   VideoQuality({
     required this.qualityName,
     required this.hlsUrl,
     required this.mp4Url,
+    this.isDrm = false,
   });
 
   factory VideoQuality.fromMap(Map<String, dynamic> map) {
@@ -159,6 +161,7 @@ class VideoQuality {
       qualityName: map['qualityName'] ?? '',
       hlsUrl: map['hlsUrl'] ?? '',
       mp4Url: map['mp4Url'] ?? '',
+      isDrm: map['isDrm'] ?? false,
     );
   }
 
@@ -167,6 +170,7 @@ class VideoQuality {
       'qualityName': qualityName,
       'hlsUrl': hlsUrl,
       'mp4Url': mp4Url,
+      'isDrm': isDrm,
     };
   }
 }

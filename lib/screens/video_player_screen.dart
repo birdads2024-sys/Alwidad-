@@ -15,12 +15,14 @@ class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
   final String title;
   final String? downloadUrl;
+  final bool isDrm;
 
   const VideoPlayerScreen({
     Key? key,
     required this.videoUrl,
     required this.title,
     this.downloadUrl,
+    this.isDrm = false,
   }) : super(key: key);
 
   @override
@@ -109,6 +111,39 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       }
     }
 
+    BetterPlayerDrmConfiguration? drmConfiguration;
+    if (widget.isDrm) {
+      final gumletRegExp = RegExp(r'video\.gumlet\.io/([a-fA-F0-9]{24})/([a-fA-F0-9]{24})');
+      final match = gumletRegExp.firstMatch(widget.videoUrl);
+      if (match != null) {
+        final orgId = match.group(1)!;
+        final assetId = match.group(2)!;
+        
+        if (Platform.isAndroid) {
+          drmConfiguration = BetterPlayerDrmConfiguration(
+            drmType: BetterPlayerDrmType.widevine,
+            licenseUrl: 'https://widevine.gumlet.com/licence/$orgId/$assetId',
+            headers: const {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "Referer": "https://video.gumlet.io/",
+              "Origin": "https://video.gumlet.io/",
+            },
+          );
+        } else if (Platform.isIOS) {
+          drmConfiguration = BetterPlayerDrmConfiguration(
+            drmType: BetterPlayerDrmType.fairplay,
+            licenseUrl: 'https://fairplay.gumlet.com/licence/$orgId/$assetId',
+            certificateUrl: 'https://fairplay.gumlet.com/certificate/$orgId',
+            headers: const {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "Referer": "https://video.gumlet.io/",
+              "Origin": "https://video.gumlet.io/",
+            },
+          );
+        }
+      }
+    }
+
     BetterPlayerDataSource dataSource;
     if (localHlsUrl != null) {
       dataSource = BetterPlayerDataSource(
@@ -130,6 +165,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         videoFormat: BetterPlayerVideoFormat.hls,
         useAsmsSubtitles: true,
         useAsmsTracks: true,
+        drmConfiguration: drmConfiguration,
         headers: const {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           "Referer": "https://video.gumlet.io/",
