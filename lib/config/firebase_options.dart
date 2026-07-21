@@ -12,12 +12,22 @@ class DefaultFirebaseOptions {
         return null; // سيتم الاعتماد على ملف google-services.json
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
+        return ios;
       case TargetPlatform.windows:
       case TargetPlatform.linux:
       case TargetPlatform.fuchsia:
         return null;
     }
   }
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAi7rY58R_A7MEEiLM1FWOaloOQQ4sbnqg',
+    appId: '1:779049231491:ios:e5e2ad89b2032dc101e7b6',
+    messagingSenderId: '779049231491',
+    projectId: 'alwidad-c4312',
+    storageBucket: 'alwidad-c4312.firebasestorage.app',
+    iosBundleId: 'com.alwidad.app',
+  );
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBaLgGyC7ZlKuflIHFc-zeBXUxIm92CD3g',

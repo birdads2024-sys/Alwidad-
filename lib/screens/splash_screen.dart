@@ -49,9 +49,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Future<void> _checkAuthAndNavigate() async {
     final stopwatch = Stopwatch()..start();
     
-    // Fetch and check current user status
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.checkCurrentUser();
+    // Fetch and check current user status with fallback timeout
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.checkCurrentUser().timeout(
+        const Duration(seconds: 4),
+        onTimeout: () {
+          debugPrint('Splash checkCurrentUser timeout');
+        },
+      );
+    } catch (e) {
+      debugPrint('Splash checkCurrentUser error: $e');
+    }
     
     final elapsedMs = stopwatch.elapsedMilliseconds;
     const minSplashDurationMs = 1200;
@@ -62,6 +71,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     
     if (!mounted) return;
 
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.isDeviceMismatch) {
       Navigator.pushReplacement(
         context,

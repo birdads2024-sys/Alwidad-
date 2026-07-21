@@ -13,24 +13,46 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init error: $e');
+  }
 
-
-
-  await Hive.initFlutter();
-
-  Hive.registerAdapter(DownloadTaskModelAdapter());
+  try {
+    await Hive.initFlutter();
+    Hive.registerAdapter(DownloadTaskModelAdapter());
+  } catch (e) {
+    debugPrint('Hive init error: $e');
+  }
   
   final downloadService = DownloadManagerService();
-  await downloadService.init();
+  try {
+    await downloadService.init();
+  } catch (e) {
+    debugPrint('DownloadManagerService init error: $e');
+  }
 
   final coursesProvider = CoursesProvider();
-  await coursesProvider.init();
+  try {
+    await coursesProvider.init();
+  } catch (e) {
+    debugPrint('CoursesProvider init error: $e');
+  }
 
   final authProvider = AuthProvider();
-  await authProvider.checkCurrentUser();
+  try {
+    await authProvider.checkCurrentUser().timeout(
+      const Duration(seconds: 3),
+      onTimeout: () {
+        debugPrint('authProvider.checkCurrentUser timed out during main()');
+      },
+    );
+  } catch (e) {
+    debugPrint('AuthProvider checkCurrentUser error: $e');
+  }
   
   runApp(
     MultiProvider(
