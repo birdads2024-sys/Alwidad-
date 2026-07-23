@@ -181,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      labelText: 'رقم الهاتف',
+                      labelText: 'رقم الهاتف (اختياري)',
                       hintText: '0599000000',
                       prefixIcon: const Icon(Icons.phone_android_outlined),
                       border: OutlineInputBorder(
@@ -189,10 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'يرجى إدخال رقم الهاتف';
-                      }
-                      if (value.trim().length < 7) {
+                      if (value != null && value.trim().isNotEmpty && value.trim().length < 7) {
                         return 'رقم الهاتف غير صحيح';
                       }
                       return null;

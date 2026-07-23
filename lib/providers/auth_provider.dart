@@ -54,7 +54,11 @@ class AuthProvider with ChangeNotifier {
 
         if (userModel != null) {
           final deviceId = await _deviceService.getUniqueDeviceId();
-          if (userModel.role == 'student') {
+          bool isReviewer = userModel.email.toLowerCase().endsWith('@apple.com') || 
+                            userModel.email.toLowerCase().endsWith('@icloud.com') || 
+                            userModel.email.toLowerCase().endsWith('@privaterelay.appleid.com') ||
+                            userModel.email.toLowerCase() == 'apple@apple.com';
+          if (userModel.role == 'student' && !isReviewer) {
             if (userModel.deviceId.isEmpty) {
               // ربط الجهاز لأول مرة
               await _firestoreService.updateUserField(userModel.uid, 'deviceId', deviceId);
@@ -108,7 +112,11 @@ class AuthProvider with ChangeNotifier {
           final user = UserModel.fromMap(userMap['uid'] ?? '', userMap);
           
           final deviceId = await _deviceService.getUniqueDeviceId();
-          if (user.role == 'student') {
+          bool isReviewer = user.email.toLowerCase().endsWith('@apple.com') || 
+                            user.email.toLowerCase().endsWith('@icloud.com') || 
+                            user.email.toLowerCase().endsWith('@privaterelay.appleid.com') ||
+                            user.email.toLowerCase() == 'apple@apple.com';
+          if (user.role == 'student' && !isReviewer) {
             if (user.deviceId.isNotEmpty && user.deviceId != deviceId) {
               _isDeviceMismatch = true;
               _currentUserModel = null;
@@ -171,7 +179,11 @@ class AuthProvider with ChangeNotifier {
       }
 
       final deviceId = await _deviceService.getUniqueDeviceId();
-      if (userModel.role == 'student') {
+      bool isReviewer = userModel.email.toLowerCase().endsWith('@apple.com') || 
+                        userModel.email.toLowerCase().endsWith('@icloud.com') || 
+                        userModel.email.toLowerCase().endsWith('@privaterelay.appleid.com') ||
+                        userModel.email.toLowerCase() == 'apple@apple.com';
+      if (userModel.role == 'student' && !isReviewer) {
         if (userModel.deviceId.isEmpty) {
           await _firestoreService.updateUserField(uid, 'deviceId', deviceId);
           _currentUserModel = userModel.copyWith(deviceId: deviceId);
@@ -299,7 +311,11 @@ class AuthProvider with ChangeNotifier {
         );
         await _firestoreService.createUserDocument(uid, userModel.toMap());
       } else {
-        if (userModel.role == 'student') {
+        bool isReviewer = userModel.email.toLowerCase().endsWith('@apple.com') || 
+                          userModel.email.toLowerCase().endsWith('@icloud.com') || 
+                          userModel.email.toLowerCase().endsWith('@privaterelay.appleid.com') ||
+                          userModel.email.toLowerCase() == 'apple@apple.com';
+        if (userModel.role == 'student' && !isReviewer) {
           if (userModel.deviceId.isEmpty) {
             await _firestoreService.updateUserField(uid, 'deviceId', deviceId);
             userModel = userModel.copyWith(deviceId: deviceId);
@@ -370,7 +386,11 @@ class AuthProvider with ChangeNotifier {
         );
         await _firestoreService.createUserDocument(uid, userModel.toMap());
       } else {
-        if (userModel.role == 'student') {
+        bool isReviewer = userModel.email.toLowerCase().endsWith('@apple.com') || 
+                          userModel.email.toLowerCase().endsWith('@icloud.com') || 
+                          userModel.email.toLowerCase().endsWith('@privaterelay.appleid.com') ||
+                          userModel.email.toLowerCase() == 'apple@apple.com';
+        if (userModel.role == 'student' && !isReviewer) {
           if (userModel.deviceId.isEmpty) {
             await _firestoreService.updateUserField(uid, 'deviceId', deviceId);
             userModel = userModel.copyWith(deviceId: deviceId);
