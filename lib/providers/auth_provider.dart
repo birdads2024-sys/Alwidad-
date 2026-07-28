@@ -412,7 +412,12 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = _getArabicErrorMessage(e);
+      final errStr = e.toString().toLowerCase();
+      if (errStr.contains('canceled') || errStr.contains('cancelled') || errStr.contains('1001')) {
+        _errorMessage = null; // User canceled, no error message needed
+      } else {
+        _errorMessage = 'تعذر تسجيل الدخول باستخدام Apple. يرجى التأكد من اختيار حساب صحيح والمحاولة لاحقاً.';
+      }
       _isLoading = false;
       notifyListeners();
       return false;

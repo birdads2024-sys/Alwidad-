@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/courses_provider.dart';
 import '../../config/app_constants.dart';
@@ -73,21 +72,28 @@ class _CoursesScreenState extends State<CoursesScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(isIos ? 'محتوى مخصص للطلاب 📚' : 'محتوى مدفوع 🔒'),
         content: Text(isIos
-            ? 'هذا المحتوى مخصص للطلاب المسجلين بالفصل الدراسي. لطلب المساعدة أو للاستفسار الفني يرجى التواصل مع الدعم الفني.'
+            ? 'هذا المحتوى مخصص للطلاب المسجلين بالفصل الدراسي.'
             : 'هذا الكورس غير مجاني ومخصص للمشتركين فقط. للاشتراك وتفعيل المحتوى، يرجى التواصل مع الإدارة عبر الواتساب.'),
         actions: [
-          TextButton(
-            child: const Text('إلغاء'),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.chat_bubble_outline),
-            label: Text(isIos ? 'تواصل مع الدعم الفني' : 'تواصل للاشتراك'),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _navigateToWhatsapp(course.title);
-            },
-          ),
+          if (isIos) ...[
+            TextButton(
+              child: const Text('حسناً'),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+          ] else ...[
+            TextButton(
+              child: const Text('إلغاء'),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.chat_bubble_outline),
+              label: const Text('تواصل للاشتراك'),
+              onPressed: () {
+                Navigator.pop(ctx);
+                _navigateToWhatsapp(course.title);
+              },
+            ),
+          ],
         ],
       ),
     );
