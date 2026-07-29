@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
@@ -20,6 +21,7 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final hasAccess = course.isFree || isSubscribed;
+    final isIos = Platform.isIOS;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -105,11 +107,13 @@ class CourseCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: course.isFree
                               ? Colors.green.shade700
-                              : Colors.amber.shade700,
+                              : (isIos ? Colors.blueGrey.shade700 : Colors.amber.shade700),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          course.isFree ? 'مفتوح مجاناً 🆓' : 'مشتركين فقط 💎',
+                          course.isFree
+                              ? 'مفتوح مجاناً 🆓'
+                              : (isIos ? 'محتوى مخصص 🔒' : 'مشتركين فقط 💎'),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -212,7 +216,9 @@ class CourseCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                hasAccess ? 'ابدأ المشاهدة الآن' : 'مغلق - اشترك للتفعيل',
+                                hasAccess
+                                    ? 'ابدأ المشاهدة الآن'
+                                    : (isIos ? 'مخصص للطلاب المسجلين' : 'مغلق - اشترك للتفعيل'),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: hasAccess ? theme.colorScheme.primary : Colors.grey,
