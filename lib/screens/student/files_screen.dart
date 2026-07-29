@@ -74,40 +74,16 @@ class _FilesScreenState extends State<FilesScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              isIos ? 'محتوى مخصص للطلاب المسجلين 📚' : 'محتوى مخصص للمشتركين فقط 🔒',
+              'محتوى مخصص للطلاب المسجلين 📚',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              isIos
-                  ? 'هذا القسم مخصص لطلاب الفصل الدراسي المسجلين.'
-                  : 'برجاء الاشتراك لرؤية الملفات والملخصات والاختبارات التفاعلية الخاصة بجميع الفصول.',
+              'هذا القسم مخصص لطلاب الفصل الدراسي المسجلين.',
               style: const TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
               textAlign: TextAlign.center,
             ),
-            if (!isIos) ...[
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: _navigateToWhatsapp,
-                  icon: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white),
-                  label: const Text(
-                    'تواصل معنا للاشتراك',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 3,
-                  ),
-                ),
-              ),
-            ],
           ],
         ),
       ),

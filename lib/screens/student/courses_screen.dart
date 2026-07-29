@@ -70,30 +70,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isIos ? 'محتوى مخصص للطلاب 📚' : 'محتوى مدفوع 🔒'),
-        content: Text(isIos
-            ? 'هذا المحتوى مخصص للطلاب المسجلين بالفصل الدراسي.'
-            : 'هذا الكورس غير مجاني ومخصص للمشتركين فقط. للاشتراك وتفعيل المحتوى، يرجى التواصل مع الإدارة عبر الواتساب.'),
+        title: const Text('محتوى مخصص للطلاب 📚'),
+        content: const Text('هذا المحتوى مخصص للطلاب المسجلين بالفصل الدراسي.'),
         actions: [
-          if (isIos) ...[
-            TextButton(
-              child: const Text('حسناً'),
-              onPressed: () => Navigator.pop(ctx),
-            ),
-          ] else ...[
-            TextButton(
-              child: const Text('إلغاء'),
-              onPressed: () => Navigator.pop(ctx),
-            ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.chat_bubble_outline),
-              label: const Text('تواصل للاشتراك'),
-              onPressed: () {
-                Navigator.pop(ctx);
-                _navigateToWhatsapp(course.title);
-              },
-            ),
-          ],
+          TextButton(
+            child: const Text('حسناً'),
+            onPressed: () => Navigator.pop(ctx),
+          ),
         ],
       ),
     );

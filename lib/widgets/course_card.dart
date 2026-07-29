@@ -107,13 +107,13 @@ class CourseCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: course.isFree
                               ? Colors.green.shade700
-                              : (isIos ? Colors.blueGrey.shade700 : Colors.amber.shade700),
+                              : Colors.blueGrey.shade700,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           course.isFree
                               ? 'مفتوح مجاناً 🆓'
-                              : (isIos ? 'محتوى مخصص 🔒' : 'مشتركين فقط 💎'),
+                              : 'محتوى مخصص 🔒',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class CourseCard extends StatelessWidget {
                               Text(
                                 hasAccess
                                     ? 'ابدأ المشاهدة الآن'
-                                    : (isIos ? 'مخصص للطلاب المسجلين' : 'مغلق - اشترك للتفعيل'),
+                                    : 'مخصص للطلاب المسجلين',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: hasAccess ? theme.colorScheme.primary : Colors.grey,
