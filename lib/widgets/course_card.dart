@@ -123,7 +123,7 @@ class CourseCard extends StatelessWidget {
                       ),
                     ),
                     // Lock icon overlay for premium courses if not subscribed
-                    if (!hasAccess)
+                    if (!hasAccess && !isIos)
                       Positioned.fill(
                         child: Container(
                           color: Colors.black.withValues(alpha: 0.5),

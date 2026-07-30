@@ -360,6 +360,42 @@ class _FilesScreenState extends State<FilesScreen> {
     }
 
     if (!isSubscribed) {
+      // على iOS: شاشة ترحيبية بسيطة بدون أي إشارة للقفل أو اشتراك
+      if (Platform.isIOS) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('الملفات والاختبارات'),
+            centerTitle: true,
+          ),
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.school_outlined,
+                    size: 80,
+                    color: theme.primaryColor,
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'مرحباً بك في منصة الوداد للرياضيات 📚',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'تواصل مع إدارة المركز لتفعيل حسابك.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
       return Scaffold(
         appBar: AppBar(
           title: const Text('الملفات والاختبارات'),

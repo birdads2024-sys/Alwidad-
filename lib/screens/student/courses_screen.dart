@@ -219,11 +219,15 @@ class _CoursesScreenState extends State<CoursesScreen> {
                             }
 
                             final course = provider.courses[index];
+                            final isLocked = !course.isFree && !isSubscribed;
+                            // على iOS: إخفاء الكورسات المقفولة تماماً
+                            if (Platform.isIOS && isLocked) {
+                              return const SizedBox.shrink();
+                            }
                             return CourseCard(
                               course: course,
                               isSubscribed: isSubscribed,
                               onTap: () {
-                                final isLocked = !course.isFree && !isSubscribed;
                                 if (isLocked) {
                                   _showSubscriptionDialog(course);
                                 } else {
