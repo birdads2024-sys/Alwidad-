@@ -256,7 +256,7 @@ class MoreScreen extends StatelessWidget {
                   _buildListTile(
                     context,
                     icon: Icons.monetization_on_outlined,
-                    title: 'سياسة الاسترجاع والاشتراكات',
+                    title: Platform.isIOS ? 'الشروط والأحكام' : 'سياسة الاسترجاع والاشتراكات',
                     onTap: () async {
                       final url = coursesProvider.appSettings?.refundPolicyUrl ?? '';
                       if (url.isNotEmpty) {

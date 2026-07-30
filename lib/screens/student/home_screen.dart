@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -70,13 +71,82 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     final subscribedCategories = user?.subscribedCategories as List<String>? ?? [];
     final userCategory = user?.category ?? '';
 
-    // اسم الفصل الحالي للطالب
     const categories = {
       'scientific_1': 'توجيهي علمي فصل أول',
       'literary_1': 'توجيهي أدبي فصل أول',
       'scientific_2': 'توجيهي علمي فصل ثاني',
       'literary_2': 'توجيهي أدبي فصل ثاني',
     };
+
+    // على iOS: عرض معلومات الحساب فقط بدون أي إشارة لاشتراك أو قفل
+    if (Platform.isIOS) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(
+            children: [
+              Icon(Icons.person_rounded, color: Colors.blueAccent),
+              SizedBox(width: 8),
+              Text('معلومات حسابي', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'فصلك الدراسي:',
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  categories[userCategory] ?? userCategory,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  'الأقسام المتاحة لديك:',
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                  textAlign: TextAlign.right,
+                ),
+                const SizedBox(height: 6),
+                if (subscribedCategories.isEmpty)
+                  const Text(
+                    'تواصل مع إدارة المركز لتفعيل حسابك',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                    textAlign: TextAlign.right,
+                  )
+                else
+                  ...subscribedCategories.map((cat) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.check_circle_outline, color: Colors.greenAccent, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          categories[cat] ?? cat,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  )),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('حسناً', style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -97,7 +167,6 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // حالة الاشتراك
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 decoration: BoxDecoration(
@@ -126,8 +195,6 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                 ),
               ),
               const SizedBox(height: 14),
-
-              // فصلك الدراسي
               Text(
                 'فصلك الدراسي:',
                 style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
@@ -140,8 +207,6 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                 textAlign: TextAlign.right,
               ),
               const SizedBox(height: 14),
-
-              // الأقسام المشترك بها
               Text(
                 'الأقسام المفعّلة لديك:',
                 style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
@@ -305,8 +370,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                 ),
               ],
 
-              // Subscription Banner for unsubscribed students
-              if (user != null && !user.isSubscribed) ...[
+              // Subscription Banner for unsubscribed students (hidden on iOS)
+              if (user != null && !user.isSubscribed && !Platform.isIOS) ...[
                 SubscriptionBanner(
                   whatsappNumber: settings?.whatsappNumber ?? AppConstants.defaultWhatsappNumber,
                 ),

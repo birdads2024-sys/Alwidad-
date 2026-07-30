@@ -98,30 +98,31 @@ class CourseCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Badge: Free/Premium
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: course.isFree
-                              ? Colors.green.shade700
-                              : Colors.blueGrey.shade700,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          course.isFree
-                              ? 'مفتوح مجاناً 🆓'
-                              : 'محتوى مخصص 🔒',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    // Badge: Free/Premium (on iOS: hide locked badge)
+                    if (course.isFree || !isIos)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: course.isFree
+                                ? Colors.green.shade700
+                                : Colors.blueGrey.shade700,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            course.isFree
+                                ? 'مفتوح مجاناً 🆓'
+                                : 'محتوى مخصص 🔒',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     // Lock icon overlay for premium courses if not subscribed
                     if (!hasAccess && !isIos)
                       Positioned.fill(
