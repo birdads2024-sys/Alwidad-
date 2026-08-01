@@ -481,7 +481,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                           Icon(Icons.auto_awesome, color: theme.primaryColor, size: 20),
                           const SizedBox(width: 8),
                           Text(
-                            'منصة الوداد للرياضيات',
+                            'Al Widad',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

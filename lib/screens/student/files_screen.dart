@@ -380,7 +380,7 @@ class _FilesScreenState extends State<FilesScreen> {
                   ),
                   const SizedBox(height: 24),
                   const Text(
-                    'مرحباً بك في منصة الوداد للرياضيات 📚',
+                    'مرحباً بك في Al Widad 📚',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),

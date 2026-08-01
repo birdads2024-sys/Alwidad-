@@ -10,7 +10,7 @@ class AppConstants {
   // القيم الافتراضية للإعدادات
   static const String defaultIntroVideoUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
   static const String defaultWhatsappNumber = '+970599000000';
-  static const String defaultIntroText = 'مرحباً بك في منصة الوداد للرياضيات. تصفح الكورسات وشاهد دروسك أونلاين أو أوفلاين بكل سهولة!';
+  static const String defaultIntroText = 'مرحباً بك في Al Widad. تصفح الكورسات وشاهد دروسك أونلاين أو أوفلاين بكل سهولة!';
   static const List<String> defaultBannerImages = [
     'assets/banner_tawjihi_1.png',
     'assets/banner_tawjihi_2.png',

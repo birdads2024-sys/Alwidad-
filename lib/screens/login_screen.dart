@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   
                   // Welcome Text
                   const Text(
-                    'مرحباً بك في الوداد للرياضيات',
+                    'مرحباً بك في Al Widad',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 26,
