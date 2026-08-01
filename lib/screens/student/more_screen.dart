@@ -252,31 +252,32 @@ class MoreScreen extends StatelessWidget {
                     },
                   ),
 
-                  // Refund Policy
-                  _buildListTile(
-                    context,
-                    icon: Icons.monetization_on_outlined,
-                    title: Platform.isIOS ? 'الشروط والأحكام' : 'سياسة الاسترجاع والاشتراكات',
-                    onTap: () async {
-                      final url = coursesProvider.appSettings?.refundPolicyUrl ?? '';
-                      if (url.isNotEmpty) {
-                        final uri = Uri.parse(url);
-                        try {
-                          await launchUrl(uri, mode: LaunchMode.externalApplication);
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('لا يمكن فتح رابط سياسة الاسترجاع')),
-                            );
+                  // Refund Policy (hidden on iOS since app is 100% free)
+                  if (!Platform.isIOS)
+                    _buildListTile(
+                      context,
+                      icon: Icons.monetization_on_outlined,
+                      title: 'سياسة الاسترجاع والاشتراكات',
+                      onTap: () async {
+                        final url = coursesProvider.appSettings?.refundPolicyUrl ?? '';
+                        if (url.isNotEmpty) {
+                          final uri = Uri.parse(url);
+                          try {
+                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('لا يمكن فتح رابط سياسة الاسترجاع')),
+                              );
+                            }
                           }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('رابط سياسة الاسترجاع غير متوفر حالياً')),
+                          );
                         }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('رابط سياسة الاسترجاع غير متوفر حالياً')),
-                        );
-                      }
-                    },
-                  ),
+                      },
+                    ),
 
                   const Divider(height: 32),
 
