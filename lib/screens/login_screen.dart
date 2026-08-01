@@ -334,13 +334,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   
                   // Login Button
                   SizedBox(
-                    height: 54,
+                    height: 56,
                     child: ElevatedButton(
                       onPressed: authProvider.isLoading ? null : _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primaryColor,
                         foregroundColor: Colors.white,
                         elevation: 4,
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.center,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -359,6 +361,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                height: 1.2,
                               ),
                             ),
                     ),
