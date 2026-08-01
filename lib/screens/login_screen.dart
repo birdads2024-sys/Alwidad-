@@ -365,51 +365,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   
-                  // Google Sign In Button
-                  SizedBox(
-                    height: 54,
-                    child: OutlinedButton.icon(
-                      onPressed: authProvider.isLoading ? null : _loginWithGoogle,
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.grey.shade700),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      icon: Image.network(
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/24px-Google_%22G%22_logo.svg.png',
-                        height: 24,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata_rounded, size: 28),
-                      ),
-                      label: Text(
-                        'الدخول بواسطة حساب Google',
-                        style: TextStyle(
-                          color: Colors.grey.shade300,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Apple Sign In Button (إجباري في أبل ستور عند وجود Google Sign In على iOS)
-                  if (Platform.isIOS) ...[
+                  // Google Sign In Button (hidden on iOS)
+                  if (!Platform.isIOS) ...[
                     SizedBox(
                       height: 54,
-                      child: ElevatedButton.icon(
-                        onPressed: authProvider.isLoading ? null : _loginWithApple,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                      child: OutlinedButton.icon(
+                        onPressed: authProvider.isLoading ? null : _loginWithGoogle,
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey.shade700),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        icon: const Icon(Icons.apple, size: 28, color: Colors.black),
-                        label: const Text(
-                          'تسجيل الدخول باستخدام Apple',
+                        icon: Image.network(
+                          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/24px-Google_%22G%22_logo.svg.png',
+                          height: 24,
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata_rounded, size: 28),
+                        ),
+                        label: Text(
+                          'الدخول بواسطة حساب Google',
                           style: TextStyle(
+                            color: Colors.grey.shade300,
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),

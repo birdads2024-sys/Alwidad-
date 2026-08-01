@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>779049231491-7kl0okanbm63m7p1q3uen1al7phkp57f.apps.googleusercontent.com</string>
+	<string>779049231491-100bdik1b5t16728ki87p31kl4vtso5d.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.779049231491-7kl0okanbm63m7p1q3uen1al7phkp57f</string>
+	<string>com.googleusercontent.apps.779049231491-100bdik1b5t16728ki87p31kl4vtso5d</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>779049231491-fs1cu56kc2588emidviin8hr8tiglusl.apps.googleusercontent.com</string>
+	<string>779049231491-oq3ec04gm13lrt84glrblq1qopm4mf00.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAi7rY58R_A7MEEiLM1FWOaloOQQ4sbnqg</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.alwidad.math</string>
+	<string>com.alwidad.app</string>
 	<key>PROJECT_ID</key>
 	<string>alwidad-c4312</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:779049231491:ios:b7fcef2ec838463801e7b6</string>
+	<string>1:779049231491:ios:e5e2ad89b2032dc101e7b6</string>
 </dict>
 </plist>

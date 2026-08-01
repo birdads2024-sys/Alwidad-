@@ -3,7 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive_ce.dart';
-import 'package:alwidad/models/download_task_model.dart';
+import 'package:alwidad_math/models/download_task_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
