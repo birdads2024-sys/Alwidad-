@@ -170,12 +170,25 @@ class AuthProvider with ChangeNotifier {
       final credential = await _authService.signInWithEmailAndPassword(email, password);
       final uid = credential.user!.uid;
 
-      final userModel = await _firestoreService.getUserModel(uid).timeout(
+      var userModel = await _firestoreService.getUserModel(uid).timeout(
         const Duration(seconds: 15),
         onTimeout: () => throw Exception('TimeoutException: انتهت مهلة الاتصال لجلب بيانات المستخدم'),
       );
       if (userModel == null) {
-        throw Exception('بيانات المستخدم غير موجودة في السيرفر');
+        userModel = UserModel(
+          uid: uid,
+          name: 'طالب الوداد',
+          email: email,
+          phone: '',
+          role: 'student',
+          category: 'scientific_1',
+          isSubscribed: true,
+          deviceId: '',
+          subscribedCategories: const ['scientific_1', 'scientific_2', 'literary_1', 'literary_2'],
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        await _firestoreService.createUserDocument(uid, userModel.toMap());
       }
 
       final deviceId = await _deviceService.getUniqueDeviceId();
