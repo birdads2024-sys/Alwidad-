@@ -412,12 +412,8 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      final errStr = e.toString().toLowerCase();
-      if (errStr.contains('canceled') || errStr.contains('cancelled') || errStr.contains('1001')) {
-        _errorMessage = null; // User canceled, no error message needed
-      } else {
-        _errorMessage = 'تعذر تسجيل الدخول باستخدام Apple. يرجى التأكد من اختيار حساب صحيح والمحاولة لاحقاً.';
-      }
+      debugPrint('Apple Sign-In error caught: $e');
+      _errorMessage = null; // Do not display red error banner on Apple sign in failure/cancellation
       _isLoading = false;
       notifyListeners();
       return false;

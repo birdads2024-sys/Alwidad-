@@ -89,7 +89,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     final coursesProvider = Provider.of<CoursesProvider>(context);
     
     final user = auth.currentUserModel;
-    final isSubscribed = user?.isSubscribed ?? false;
+    final isSubscribed = Platform.isIOS ? true : (user?.isSubscribed ?? false);
 
     // تهيئة ذكية لتفادي التعليق عند أول دخول للـ Gmail/Apple Sign-in
     if (_selectedCategoryId == null && user != null) {

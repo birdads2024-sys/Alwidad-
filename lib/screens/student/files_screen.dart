@@ -338,7 +338,7 @@ class _FilesScreenState extends State<FilesScreen> {
     final theme = Theme.of(context);
     final auth = Provider.of<AuthProvider>(context);
     final user = auth.currentUserModel;
-    final isSubscribed = user?.isSubscribed ?? false;
+    final isSubscribed = Platform.isIOS ? true : (user?.isSubscribed ?? false);
 
     // تعيين القسم الافتراضي لأول مرة عند توفر بيانات المستخدم
     if (_selectedCategoryId == null && user != null) {
