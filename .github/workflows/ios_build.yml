@@ -1,4 +1,4 @@
-﻿name: iOS Build Check
+name: iOS Build Check
 
 on:
   push:
@@ -20,7 +20,9 @@ jobs:
           cache: true
 
       - name: Install Dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter precache --ios
 
       - name: Install iOS Pods
         working-directory: ios
