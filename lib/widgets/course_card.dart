@@ -19,6 +19,7 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isIos = Platform.isIOS;
     final hasAccess = isIos ? true : (course.isFree || isSubscribed);
 
