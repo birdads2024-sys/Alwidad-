@@ -375,6 +375,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2GG5JWS6K5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alwidad.math;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -555,6 +557,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2GG5JWS6K5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alwidad.math;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -578,6 +582,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2GG5JWS6K5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alwidad.math;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
