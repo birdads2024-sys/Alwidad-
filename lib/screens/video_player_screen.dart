@@ -1,9 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:better_player_plus/better_player_plus.dart';
 import 'package:crypto/crypto.dart';
-import 'dart:convert';
 import '../services/screen_security_service.dart';
-import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import '../services/download_manager_service.dart';
@@ -31,14 +32,28 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   BetterPlayerController? _betterPlayerController;
   bool _isLoading = true;
   bool _isOffline = false;
+  Timer? _screenCaptureTimer;
 
   @override
   void initState() {
     super.initState();
     // تفعيل حماية الشاشة عند فتح مشغل الفيديو (منع لقطات الشاشة وتسجيل الصوت والصورة)
     ScreenSecurityService.enableSecureMode();
+    ScreenSecurityService.isScreenCaptured.addListener(_onScreenCaptureChanged);
+    _screenCaptureTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      ScreenSecurityService.checkScreenCapture();
+    });
 
     _initializePlayer();
+  }
+
+  void _onScreenCaptureChanged() {
+    if (ScreenSecurityService.isScreenCaptured.value) {
+      _betterPlayerController?.pause();
+    }
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _initializePlayer() async {
@@ -150,6 +165,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   void dispose() {
+    _screenCaptureTimer?.cancel();
+    ScreenSecurityService.isScreenCaptured.removeListener(_onScreenCaptureChanged);
     // إيقاف حماية الشاشة عند الخروج من مشغل الفيديو
     ScreenSecurityService.disableSecureMode();
     _betterPlayerController?.dispose();
@@ -250,15 +267,65 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         ],
       ),
       body: SafeArea(
-        child: Center(
-          child: _isLoading 
-              ? const CircularProgressIndicator(color: Colors.white)
-              : AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: BetterPlayer(
-                    controller: _betterPlayerController!,
+        child: ValueListenableBuilder<bool>(
+          valueListenable: ScreenSecurityService.isScreenCaptured,
+          builder: (context, isCaptured, child) {
+            if (isCaptured) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.videocam_off_rounded,
+                          size: 64,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'عذراً، تسجيل الشاشة غير مسموح!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'لحماية حقوق المحتوى التعليمي، يرجى إيقاف تسجيل الشاشة للاستمرار في المشاهدة.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
+              );
+            }
+
+            return Center(
+              child: _isLoading 
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: BetterPlayer(
+                        controller: _betterPlayerController!,
+                      ),
+                    ),
+            );
+          },
         ),
       ),
     );

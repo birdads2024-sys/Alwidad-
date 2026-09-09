@@ -29,13 +29,12 @@ class CourseCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasAccess
-              ? theme.colorScheme.primary.withValues(alpha: 0.1)
-              : Colors.grey.shade800,
+          color: const Color(0xFFE2E8F0),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -98,8 +97,8 @@ class CourseCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Badge: Free/Premium (on iOS: hide locked badge)
-                    if (course.isFree || !isIos)
+                    // Badge: Free/Premium (on iOS: completely hidden)
+                    if (!isIos && course.isFree)
                       Positioned(
                         top: 12,
                         right: 12,
@@ -185,10 +184,10 @@ class CourseCard extends StatelessWidget {
                     children: [
                       Text(
                         course.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: theme.colorScheme.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -196,9 +195,9 @@ class CourseCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         course.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.grey.shade400,
+                          color: Color(0xFF64748B),
                           height: 1.4,
                         ),
                         maxLines: 2,
@@ -213,7 +212,7 @@ class CourseCard extends StatelessWidget {
                               Icon(
                                 Icons.play_circle_outline_rounded,
                                 size: 16,
-                                color: hasAccess ? theme.colorScheme.primary : Colors.grey,
+                                color: hasAccess ? theme.colorScheme.primary : const Color(0xFF94A3B8),
                               ),
                               const SizedBox(width: 4),
                               Text(
@@ -222,16 +221,16 @@ class CourseCard extends StatelessWidget {
                                     : 'مخصص للطلاب المسجلين',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: hasAccess ? theme.colorScheme.primary : Colors.grey,
+                                  color: hasAccess ? theme.colorScheme.primary : const Color(0xFF64748B),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
                           ),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 14,
-                            color: Colors.grey.shade600,
+                            color: Color(0xFF94A3B8),
                           ),
                         ],
                       ),

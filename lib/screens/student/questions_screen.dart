@@ -85,12 +85,15 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                       entry.value,
                       style: TextStyle(
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? Colors.white : Colors.grey.shade400,
+                        color: isSelected ? Colors.white : const Color(0xFF475569),
                       ),
                     ),
                     selected: isSelected,
                     selectedColor: theme.primaryColor,
                     backgroundColor: theme.colorScheme.surface,
+                    side: BorderSide(
+                      color: isSelected ? theme.primaryColor : const Color(0xFFE2E8F0),
+                    ),
                     onSelected: (selected) {
                       if (selected && _selectedCategoryId != entry.key) {
                         setState(() {

@@ -105,9 +105,9 @@ class DeviceMismatchScreen extends StatelessWidget {
                       Text(
                         'لحماية خصوصيتك وضمان أمان حسابك، تُتيح منصة الوداد استخدام الحساب من جهاز واحد فقط في نفس الوقت. إذا قمت بتغيير جهازك مؤخراً، أو إذا كنت تعتقد أن هناك خطأ ما، يرجى النقر على الزر أدناه للتواصل مع الدعم الفني عبر واتساب لإعادة تعيين الجهاز المعتمد.',
                         textAlign: TextAlign.justify,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.grey.shade400,
+                          color: Color(0xFF475569),
                           height: 1.6,
                         ),
                       ),

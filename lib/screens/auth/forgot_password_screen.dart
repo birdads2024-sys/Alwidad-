@@ -94,9 +94,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(
                     'لا تقلق! أدخل بريدك الإلكتروني المسجل وسنقوم بإرسال رابط مخصص لإعادة تعيين كلمة المرور الخاصة بك فوراً.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade400,
+                      color: Color(0xFF64748B),
                       height: 1.5,
                     ),
                   ),

@@ -17,7 +17,7 @@ class AlwidadApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Alwidad',
-        theme: AppTheme.darkTheme,
+        theme: AppTheme.lightTheme,
         initialRoute: AppRoutes.splash,
         routes: AppRoutes.routes,
         debugShowCheckedModeBanner: false,

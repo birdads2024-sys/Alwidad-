@@ -7,8 +7,6 @@ import '../../providers/courses_provider.dart';
 import '../../config/app_constants.dart';
 import '../login_screen.dart';
 import 'edit_profile_screen.dart';
-import 'pdf_files_screen.dart';
-import 'questions_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -118,9 +116,9 @@ class MoreScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           user?.email ?? 'البريد الإلكتروني',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade400,
+                            color: Color(0xFF64748B),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -128,9 +126,9 @@ class MoreScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           'الهاتف: ${user?.phone ?? ""}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade400,
+                            color: Color(0xFF64748B),
                           ),
                         ),
                         const SizedBox(height: 6),

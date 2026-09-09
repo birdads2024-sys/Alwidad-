@@ -119,9 +119,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     'سجل بياناتك للبدء في تصفح ومتابعة محاضراتك',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade400,
+                      color: Color(0xFF64748B),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -305,9 +305,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'لديك حساب بالفعل؟',
-                        style: TextStyle(color: Colors.grey.shade400),
+                        style: TextStyle(color: Color(0xFF64748B)),
                       ),
                       TextButton(
                         onPressed: () {

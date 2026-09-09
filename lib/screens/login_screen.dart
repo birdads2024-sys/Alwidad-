@@ -201,9 +201,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'قم بتسجيل الدخول للمتابعة إلى حسابك والدروس',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade400,
+                      color: Color(0xFF64748B),
                     ),
                   ),
                   const SizedBox(height: 36),
@@ -298,9 +298,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'تذكرني',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey.shade300,
+                                color: Color(0xFF334155),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -375,7 +375,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: OutlinedButton.icon(
                         onPressed: authProvider.isLoading ? null : _loginWithGoogle,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey.shade700),
+                          side: const BorderSide(color: Color(0xFFCBD5E1)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -385,10 +385,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 24,
                           errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata_rounded, size: 28),
                         ),
-                        label: Text(
+                        label: const Text(
                           'الدخول بواسطة حساب Google',
                           style: TextStyle(
-                            color: Colors.grey.shade300,
+                            color: Color(0xFF334155),
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
@@ -402,9 +402,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'ليس لديك حساب؟',
-                        style: TextStyle(color: Colors.grey.shade400),
+                        style: TextStyle(color: Color(0xFF64748B)),
                       ),
                       TextButton(
                         onPressed: () {
