@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive_ce/hive.dart';
 import '../models/download_task_model.dart';
+import 'download_manager_service.dart';
 
 class _PlaylistData {
   final String qualityUrl;
@@ -195,6 +196,7 @@ class HlsDownloadService {
 
     DownloadTaskModel? task;
 
+    await DownloadManagerService.onDownloadStarted();
     try {
       final audioUrl = await _findAudioPlaylistUrl(m3u8Url);
       final playlistData = await _fetchQualityPlaylist(m3u8Url);
@@ -488,6 +490,7 @@ video.m3u8
       debugPrint('[HLS] Unexpected error: $e');
     } finally {
       _cancelTokens.remove(taskId);
+      await DownloadManagerService.onDownloadFinished();
     }
   }
 

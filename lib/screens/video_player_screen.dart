@@ -234,10 +234,15 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                   tooltip: 'تحميل الفيديو',
                   onPressed: () async {
                     try {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('بدأ التحميل... 📥')),
+                        );
+                      }
                       final isHls = (widget.downloadUrl != null && widget.downloadUrl!.contains('.m3u8')) ||
                           widget.videoUrl.contains('.m3u8');
                       if (isHls && widget.downloadUrl != null) {
-                        await HlsDownloadService().startHlsDownload(
+                        HlsDownloadService().startHlsDownload(
                           taskId: widget.videoUrl,
                           m3u8Url: widget.downloadUrl!,
                           onProgress: (progress, downloaded, total) {},
@@ -250,12 +255,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         
                         final downloadService = DownloadManagerService();
                         downloadService.startDownload(widget.videoUrl, widget.downloadUrl!, savePath);
-                      }
-                      
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('بدأ التحميل...')),
-                        );
                       }
                     } catch (e) {
                       debugPrint('Download error: $e');

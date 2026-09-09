@@ -30,17 +30,20 @@ class _CourseVideosScreenState extends State<CourseVideosScreen> {
       final hash = sha256.convert(bytes).toString();
       final savePath = '${dir.path}/$hash.mp4';
       
-      await DownloadManagerService().startDownload(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('بدأ تحميل ${widget.course.title} (${quality.qualityName})... 📥'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      DownloadManagerService().startDownload(
         quality.mp4Url, 
         quality.mp4Url, 
         savePath,
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('بدأ تحميل ${widget.course.title} (${quality.qualityName})... 📥')),
-        );
-      }
     } catch (e) {
       debugPrint('Download start error: $e');
     }

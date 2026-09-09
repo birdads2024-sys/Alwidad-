@@ -2,17 +2,68 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../models/download_task_model.dart';
 import 'hls_download_service.dart';
+import 'screen_security_service.dart';
 
 class DownloadManagerService {
+  // Active downloads count and iOS background task ID
+  static int _activeCount = 0;
+  static int? _bgTaskId;
+
+  /// بدء الحفاظ على الشاشة ومهمة الخلفية عند بدء أي تحميل
+  static Future<void> onDownloadStarted() async {
+    _activeCount++;
+    if (_activeCount == 1) {
+      try {
+        await WakelockPlus.enable();
+      } catch (e) {
+        debugPrint('Error enabling wakelock: $e');
+      }
+      try {
+        await ScreenSecurityService.setKeepScreenOn(true);
+      } catch (e) {
+        debugPrint('Error setting keep screen on: $e');
+      }
+      try {
+        _bgTaskId = await ScreenSecurityService.startBackgroundTask();
+      } catch (e) {
+        debugPrint('Error starting background task: $e');
+      }
+    }
+  }
+
+  /// إيقاف الحفاظ على الشاشة ومهمة الخلفية عند انتهاء كافة التحميلات
+  static Future<void> onDownloadFinished() async {
+    _activeCount = (_activeCount - 1).clamp(0, 9999);
+    if (_activeCount == 0) {
+      try {
+        await WakelockPlus.disable();
+      } catch (e) {
+        debugPrint('Error disabling wakelock: $e');
+      }
+      try {
+        await ScreenSecurityService.setKeepScreenOn(false);
+      } catch (e) {
+        debugPrint('Error clearing keep screen on: $e');
+      }
+      if (_bgTaskId != null) {
+        try {
+          await ScreenSecurityService.endBackgroundTask(_bgTaskId);
+        } catch (e) {
+          debugPrint('Error ending background task: $e');
+        }
+        _bgTaskId = null;
+      }
+    }
+  }
+
   // Use a single Dio instance with no interceptors
   static final Dio _dio = Dio(BaseOptions(
     connectTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(minutes: 30),
     sendTimeout: const Duration(seconds: 30),
-    // No custom headers at all - let Dio use its default Android headers
-    // Gumlet and most CDNs work fine with default headers
   ));
 
   // Singleton pattern so CancelTokens are shared across instances
@@ -179,136 +230,164 @@ class DownloadManagerService {
     final cancelToken = CancelToken();
     _cancelTokens[id] = cancelToken;
 
+    await onDownloadStarted();
+    int attempt = 0;
+    const maxAttempts = 3;
+    bool isCompletedSuccessfully = false;
+
     try {
-      bool resumedSuccessfully = false;
-      if (existingBytes > 0) {
+      while (attempt < maxAttempts && !isCompletedSuccessfully) {
+        attempt++;
         try {
-          debugPrint('Attempting Range request: bytes=$existingBytes-');
-          final response = await _dio.get<ResponseBody>(
-            url,
-            options: Options(
-              headers: {'Range': 'bytes=$existingBytes-'},
-              responseType: ResponseType.stream,
-            ),
-            cancelToken: cancelToken,
-          );
+          final file = File(task.savePath);
+          int existingBytes = 0;
+          if (await file.exists()) {
+            existingBytes = await file.length();
+          }
 
-          if (response.statusCode == 206) {
-            resumedSuccessfully = true;
-            int total = task.totalBytes;
-            final contentRange = response.headers.value('content-range');
-            if (contentRange != null && contentRange.contains('/')) {
-              final parts = contentRange.split('/');
-              final parsedTotal = int.tryParse(parts.last);
-              if (parsedTotal != null && parsedTotal > 0) {
-                total = parsedTotal;
-              }
-            } else {
-              final len = int.tryParse(response.headers.value('content-length') ?? '');
-              if (len != null && len > 0) {
-                total = existingBytes + len;
-              }
-            }
-            if (total > 0) {
-              task.totalBytes = total;
-            }
-
-            final sink = file.openWrite(mode: FileMode.append);
-            int received = 0;
-            int lastSaveMs = 0;
+          bool resumedSuccessfully = false;
+          if (existingBytes > 0) {
             try {
-              await for (final chunk in response.data!.stream) {
-                if (cancelToken.isCancelled) break;
-                sink.add(chunk);
-                received += chunk.length;
-                task.downloadedBytes = existingBytes + received;
-                final now = DateTime.now().millisecondsSinceEpoch;
-                if (now - lastSaveMs > 300) {
-                  lastSaveMs = now;
-                  task.save();
-                }
-              }
-            } finally {
-              await sink.flush();
-              await sink.close();
-            }
-
-            if (cancelToken.isCancelled) {
-              throw DioException.requestCancelled(
-                requestOptions: response.requestOptions,
-                reason: 'User cancelled download',
+              debugPrint('Attempting Range request (attempt $attempt): bytes=$existingBytes-');
+              final response = await _dio.get<ResponseBody>(
+                url,
+                options: Options(
+                  headers: {'Range': 'bytes=$existingBytes-'},
+                  responseType: ResponseType.stream,
+                  validateStatus: (status) => status != null && (status == 206 || status == 200),
+                ),
+                cancelToken: cancelToken,
               );
+
+              if (response.statusCode == 206) {
+                resumedSuccessfully = true;
+                int total = task.totalBytes;
+                final contentRange = response.headers.value('content-range');
+                if (contentRange != null && contentRange.contains('/')) {
+                  final parts = contentRange.split('/');
+                  final parsedTotal = int.tryParse(parts.last);
+                  if (parsedTotal != null && parsedTotal > 0) {
+                    total = parsedTotal;
+                  }
+                } else {
+                  final len = int.tryParse(response.headers.value('content-length') ?? '');
+                  if (len != null && len > 0) {
+                    total = existingBytes + len;
+                  }
+                }
+                if (total > 0) {
+                  task.totalBytes = total;
+                }
+
+                final sink = file.openWrite(mode: FileMode.append);
+                int received = 0;
+                int lastSaveMs = 0;
+                try {
+                  await for (final chunk in response.data!.stream) {
+                    if (cancelToken.isCancelled) break;
+                    sink.add(chunk);
+                    received += chunk.length;
+                    task.downloadedBytes = existingBytes + received;
+                    final now = DateTime.now().millisecondsSinceEpoch;
+                    if (now - lastSaveMs > 400) {
+                      lastSaveMs = now;
+                      task.save();
+                    }
+                  }
+                } finally {
+                  await sink.flush();
+                  await sink.close();
+                }
+
+                if (cancelToken.isCancelled) {
+                  throw DioException.requestCancelled(
+                    requestOptions: response.requestOptions,
+                    reason: 'User cancelled download',
+                  );
+                }
+              } else {
+                debugPrint('Server returned status ${response.statusCode} instead of 206. Falling back to full download.');
+                resumedSuccessfully = false;
+              }
+            } on DioException catch (e) {
+              if (CancelToken.isCancel(e)) rethrow;
+              debugPrint('Range request failed: ${e.message}, falling back to full download');
+              resumedSuccessfully = false;
+            } catch (e) {
+              debugPrint('Error during resume: $e, falling back to full download');
+              resumedSuccessfully = false;
             }
+          }
+
+          if (!resumedSuccessfully) {
+            if (await file.exists()) {
+              try { await file.delete(); } catch (_) {}
+            }
+            task.downloadedBytes = 0;
+            task.totalBytes = 0;
+            await task.save();
+
+            int lastSaveMs = 0;
+            await _dio.download(
+              url,
+              savePath,
+              cancelToken: cancelToken,
+              deleteOnError: false,
+              onReceiveProgress: (received, total) {
+                task?.downloadedBytes = received;
+                if (total > 0) {
+                  task?.totalBytes = total;
+                }
+                final now = DateTime.now().millisecondsSinceEpoch;
+                if (now - lastSaveMs > 400) {
+                  lastSaveMs = now;
+                  task?.save();
+                }
+              },
+            );
+          }
+
+          final savedFile = File(savePath);
+          if (await savedFile.exists() && await savedFile.length() > 0) {
+            task.status = 'completed';
+            task.totalBytes = await savedFile.length();
+            task.downloadedBytes = task.totalBytes;
+            await task.save();
+            debugPrint('Download completed: $id (${task.totalBytes} bytes)');
+            isCompletedSuccessfully = true;
+            break;
           } else {
-            debugPrint('Server returned status ${response.statusCode} instead of 206. Restarting from scratch.');
-            resumedSuccessfully = false;
+            throw Exception('Empty file after download');
           }
         } on DioException catch (e) {
           if (CancelToken.isCancel(e)) {
-            rethrow;
+            task.status = 'paused';
+            await task.save();
+            debugPrint('Download paused/cancelled: $id');
+            return;
           }
-          debugPrint('Range request failed: ${e.message}, falling back to full download');
-          resumedSuccessfully = false;
+          if (attempt < maxAttempts) {
+            debugPrint('Download interrupted (attempt $attempt/$maxAttempts): ${e.message}. Retrying in 2s...');
+            await Future.delayed(const Duration(seconds: 2));
+          } else {
+            task.status = 'failed';
+            await task.save();
+            debugPrint('Download DioException: id=$id url=$url | status=${e.response?.statusCode} | ${e.message}');
+          }
         } catch (e) {
-          debugPrint('Error during resume: $e, falling back to full download');
-          resumedSuccessfully = false;
+          if (attempt < maxAttempts) {
+            debugPrint('Download error (attempt $attempt/$maxAttempts): $e. Retrying in 2s...');
+            await Future.delayed(const Duration(seconds: 2));
+          } else {
+            task.status = 'failed';
+            await task.save();
+            debugPrint('Download unexpected error: $id | $e');
+          }
         }
       }
-
-      if (!resumedSuccessfully) {
-        if (await file.exists()) {
-          try { await file.delete(); } catch (_) {}
-        }
-        task.downloadedBytes = 0;
-        task.totalBytes = 0;
-        await task.save();
-
-        int lastSaveMs = 0;
-        await _dio.download(
-          url,
-          savePath,
-          cancelToken: cancelToken,
-          deleteOnError: false,
-          onReceiveProgress: (received, total) {
-            task?.downloadedBytes = received;
-            if (total > 0) {
-              task?.totalBytes = total;
-            }
-            final now = DateTime.now().millisecondsSinceEpoch;
-            if (now - lastSaveMs > 300) {
-              lastSaveMs = now;
-              task?.save();
-            }
-          },
-        );
-      }
-
-      final savedFile = File(savePath);
-      if (await savedFile.exists() && await savedFile.length() > 0) {
-        task.status = 'completed';
-        task.totalBytes = await savedFile.length();
-        task.downloadedBytes = task.totalBytes;
-        debugPrint('Download completed: $id (${task.totalBytes} bytes)');
-      } else {
-        task.status = 'failed';
-        debugPrint('Download failed (empty file): $id');
-      }
-      await task.save();
-    } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
-        task.status = 'paused';
-        debugPrint('Download paused/cancelled: $id');
-      } else {
-        task.status = 'failed';
-        debugPrint('Download DioException: id=$id url=$url | status=${e.response?.statusCode} | ${e.message}');
-      }
-      await task.save();
-    } catch (e) {
-      task.status = 'failed';
-      await task.save();
-      debugPrint('Download unexpected error: $id | $e');
     } finally {
       _cancelTokens.remove(id);
+      await onDownloadFinished();
     }
   }
 

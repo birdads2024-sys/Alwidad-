@@ -21,6 +21,30 @@ import UIKit
       securityChannel?.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
         if call.method == "isScreenCaptured" {
           result(UIScreen.main.isCaptured)
+        } else if call.method == "setKeepScreenOn" {
+          if let args = call.arguments as? [String: Any], let enable = args["enable"] as? Bool {
+            UIApplication.shared.isIdleTimerDisabled = enable
+            result(true)
+          } else {
+            result(false)
+          }
+        } else if call.method == "startBackgroundTask" {
+          var bgTaskId: UIBackgroundTaskIdentifier = .invalid
+          bgTaskId = UIApplication.shared.beginBackgroundTask(withName: "VideoDownload") {
+            UIApplication.shared.endBackgroundTask(bgTaskId)
+            bgTaskId = .invalid
+          }
+          result(bgTaskId.rawValue)
+        } else if call.method == "endBackgroundTask" {
+          if let args = call.arguments as? [String: Any], let id = args["id"] as? Int {
+            let bgTaskId = UIBackgroundTaskIdentifier(rawValue: id)
+            if bgTaskId != .invalid {
+              UIApplication.shared.endBackgroundTask(bgTaskId)
+            }
+            result(true)
+          } else {
+            result(false)
+          }
         } else {
           result(FlutterMethodNotImplemented)
         }

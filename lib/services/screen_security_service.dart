@@ -63,5 +63,39 @@ class ScreenSecurityService {
       }
     }
   }
+
+  /// إبقاء الشاشة مضاءة ومنع القفل التلقائي أثناء التحميل
+  static Future<void> setKeepScreenOn(bool enable) async {
+    if (kIsWeb) return;
+    try {
+      if (Platform.isIOS) {
+        await _channel.invokeMethod('setKeepScreenOn', {'enable': enable});
+      }
+    } catch (e) {
+      debugPrint('Error in setKeepScreenOn: $e');
+    }
+  }
+
+  /// بدء مهمة في الخلفية على نظام iOS لإبقاء التحميل مستمراً عند قفل الشاشة
+  static Future<int?> startBackgroundTask() async {
+    if (kIsWeb || !Platform.isIOS) return null;
+    try {
+      final taskId = await _channel.invokeMethod<int>('startBackgroundTask');
+      return taskId;
+    } catch (e) {
+      debugPrint('Error starting background task: $e');
+      return null;
+    }
+  }
+
+  /// إنهاء مهمة الخلفية على iOS
+  static Future<void> endBackgroundTask(int? taskId) async {
+    if (kIsWeb || !Platform.isIOS || taskId == null) return;
+    try {
+      await _channel.invokeMethod('endBackgroundTask', {'id': taskId});
+    } catch (e) {
+      debugPrint('Error ending background task: $e');
+    }
+  }
 }
 
