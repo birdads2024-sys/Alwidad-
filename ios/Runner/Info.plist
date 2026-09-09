@@ -45,6 +45,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<!-- صلاحيات الكاميرا والصور -->
 	<key>NSCameraUsageDescription</key>
 	<string>يستخدم التطبيق الكاميرا لتحديث صورة الملف الشخصي</string>
