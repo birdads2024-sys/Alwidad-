@@ -258,14 +258,15 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     final settings = coursesProvider.appSettings;
     final user = auth.currentUserModel;
 
-    // On iOS: always use local clean white banners for Apple Review
-    // On Android: use banners from Firebase settings
-    final bannerImages = Platform.isIOS
-        ? AppConstants.defaultBannerImages
-        : (settings?.bannerImages ?? AppConstants.defaultBannerImages);
-    final introText = Platform.isIOS
-        ? 'مرحباً بك في Al Widad. تصفح الكورسات وشاهد دروسك بكل سهولة!'
-        : (settings?.introText ?? AppConstants.defaultIntroText);
+    // Banners from Firebase settings (or fallback to defaults if empty)
+    final bannerImages = (settings?.bannerImages != null && settings!.bannerImages.isNotEmpty)
+        ? settings.bannerImages
+        : AppConstants.defaultBannerImages;
+    final introText = (settings?.introText != null && settings!.introText.isNotEmpty)
+        ? settings.introText
+        : (Platform.isIOS
+            ? 'مرحباً بك في Al Widad. تصفح الكورسات وشاهد دروسك بكل سهولة!'
+            : AppConstants.defaultIntroText);
     final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
 
     return Scaffold(

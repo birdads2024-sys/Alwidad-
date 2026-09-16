@@ -21,7 +21,7 @@ class CourseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isIos = Platform.isIOS;
-    final hasAccess = isIos ? true : (course.isFree || isSubscribed);
+    final hasAccess = course.isFree || isSubscribed;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
